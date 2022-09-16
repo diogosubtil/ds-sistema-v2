@@ -57,7 +57,7 @@
                             @if (empty($usuarios))
                                 <tr>
                                     <td colspan="5" class="text-center">
-                                        Nenhum usuário encontrado
+                                        Nenhum Usuário Encontrado
                                     </td>
                                 </tr>
                             @endif
