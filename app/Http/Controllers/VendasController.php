@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Estoque;
 use App\Models\Venda;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class VendasController extends Controller
 {
@@ -78,6 +79,12 @@ class VendasController extends Controller
     //FUNÇÃO PARA ADICIONAR REGISTRO NAS VENDAS
     public function store(Request $request)
     {
+        //OBTEM O ITEM DO ESTOQUE E FAZ UPDATE CONFORME A VENDA
+        $estoque = Estoque::query()->where('id','=',$request->idproduto)->first();
+        $estoque->quantidade = $estoque->quantidade - $request->quantidade;
+        $estoque->totalvalor = $estoque->totalvalor - ($request->quantidade * $estoque->valorvenda);
+        $estoque->save();
+
         //OBTEM TODOS OS INPUTS E FAZ Mass assignment
         Venda::create($request->all());
 
@@ -101,6 +108,22 @@ class VendasController extends Controller
     //FUNÇÃO PARA FAZER UPDATE DO REGISTRO DA VENDA
     public function update(Venda $venda,Request $request)
     {
+
+        if ($venda->idproduto !== $request->idproduto || $venda->quantidade !== $request->quantidade){
+            //OBTEM O ITEM DO ESTOQUE E FAZ UPDATE CONFORME A EDIÇÃO
+            $estoque = Estoque::query()->where('id','=',$venda->idproduto)->first();
+            $estoque->quantidade = $estoque->quantidade + $venda->quantidade;
+            $estoque->totalvalor = $estoque->totalvalor + ($venda->quantidade * $estoque->valorvenda);
+            $estoque->save();
+        }
+
+        //OBTEM O ITEM DO ESTOQUE E FAZ UPDATE CONFORME A EDIÇÃO
+        $estoque = Estoque::query()->where('id','=',$request->idproduto)->first();
+        $estoque->quantidade = $estoque->quantidade - $request->quantidade;
+        $estoque->totalvalor = $estoque->totalvalor - ($request->quantidade * $estoque->valorvenda);
+        $estoque->save();
+
+
         //OBTEM TODOS OS INPUTS E FAZ Mass assignment
         $venda->fill($request->all());
         $venda->save();
@@ -113,6 +136,13 @@ class VendasController extends Controller
     //FUNÇÃO PARA EXCLUIR REGISTRO DA VENDA
     public function destroy(Venda $venda)
     {
+
+        //OBTEM O ITEM DO ESTOQUE E FAZ UPDATE CONFORME A VENDA
+        $estoque = Estoque::query()->where('id','=',$venda->idproduto)->first();
+        $estoque->quantidade = $estoque->quantidade + $venda->quantidade;
+        $estoque->totalvalor = $estoque->totalvalor + ($venda->quantidade * $estoque->valorvenda);
+        $estoque->save();
+
         //FAZ A EXCLUSÃO
         $venda->delete();
 

@@ -343,8 +343,8 @@ $unidadesUsuario = explode(',', Auth::user()['unidade']);
                     </li>
 
 <!--                    --><?php //if (Login::requireFuncao('1 , 2')) { ?>
-                    <li class="nav-item <?php active('usuarios'); ?>">
-                        <a href="#" class="nav-link <?php active('usuarios'); ?>">
+                    <li class="nav-item <?php active('users'); ?>">
+                        <a href="#" class="nav-link <?php active('users'); ?>">
                             <i class="nav-icon fas fa-user"></i>
                             <p>
                                 Usuarios
@@ -354,7 +354,7 @@ $unidadesUsuario = explode(',', Auth::user()['unidade']);
 
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route('users.create') }}" class="nav-link <?php activemenu('usuarios/'); ?>">
+                                <a href="{{ route('users.create') }}" class="nav-link <?php activemenu('users/create'); ?>">
                                     <i class="fas fa-pen nav-icon"></i>
                                     <p>Cadastrar</p>
                                 </a>
@@ -362,7 +362,7 @@ $unidadesUsuario = explode(',', Auth::user()['unidade']);
                         </ul>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route('users.index') }}" class="nav-link <?php activemenu('usuarios/create'); ?>">
+                                <a href="{{ route('users.index') }}" class="nav-link <?php activemenu('users/'); ?>">
                                     <i class="fas fa-list nav-icon"></i>
                                     <p>Lista</p>
                                 </a>
