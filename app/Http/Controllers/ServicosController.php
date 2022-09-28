@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ServicosFormRequest;
 use App\Models\Servico;
+use App\Repositories\ServicoRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ServicosController extends Controller
 {
@@ -73,10 +76,10 @@ class ServicosController extends Controller
     }
 
     //FUNÇÃO PARA CADASTRAR UM REGISTRO DE SERVIÇOS
-    public function store(Request $request)
+    public function store(ServicosFormRequest $request, ServicoRepository $repository)
     {
-        //OBTEM TODOS OS INPUTS E FAZ Mass assignment
-        Servico::create($request->all());
+        //OBTEM OS DADOS E CADASTRAR VIA SERVÇOS REPOSITORY
+        $repository->add($request);
 
         //RETORNA PARA A PAGINA
         return to_route('servicos.create')
@@ -91,13 +94,10 @@ class ServicosController extends Controller
     }
 
     //FUNÇÃO PARA FAZER UPDATE DO REGISTRO DE SERVIÇO
-    public function update(Servico $servico, Request $request)
+    public function update(Servico $servico, ServicosFormRequest $request, ServicoRepository $repository)
     {
-        //OBTEM TODOS OS INPUTS E FAZ Mass assignment
-        $servico->fill($request->all());
-
-        //SALVA A EDIÇÃO
-        $servico->save();
+        //OBTEM OS DADOS E FAZ UPDATE VIA ESTOQUE REPOSITORY
+        $repository->edit($request, $servico);
 
         //RETORNA PARA A PAGINA
         return to_route('servicos.index')
@@ -105,10 +105,10 @@ class ServicosController extends Controller
     }
 
     //FUNÇÃO PARA EXCLUIR REGISTRO DE SERVIÇOS
-    public function destroy(Servico $servico)
+    public function destroy(Servico $servico, ServicoRepository $repository)
     {
-        //DELELTA O REGISTRO
-        $servico->delete();
+        //OBTEM OS DADOS E DELETA VIA ESTOQUE REPOSITORY
+        $repository->delete($servico);
 
         //RETORNA PARA A PAGINA
         return to_route('servicos.index')

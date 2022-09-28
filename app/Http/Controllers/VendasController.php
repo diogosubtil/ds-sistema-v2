@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\VendasFormRequest;
 use App\Models\Estoque;
 use App\Models\Venda;
+use App\Repositories\EstoqueRepository;
+use App\Repositories\VendaRepository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class VendasController extends Controller
 {
@@ -77,16 +79,10 @@ class VendasController extends Controller
     }
 
     //FUNÇÃO PARA ADICIONAR REGISTRO NAS VENDAS
-    public function store(Request $request)
+    public function store(VendasFormRequest $request, VendaRepository $repository)
     {
-        //OBTEM O ITEM DO ESTOQUE E FAZ UPDATE CONFORME A VENDA
-        $estoque = Estoque::query()->where('id','=',$request->idproduto)->first();
-        $estoque->quantidade = $estoque->quantidade - $request->quantidade;
-        $estoque->totalvalor = $estoque->totalvalor - ($request->quantidade * $estoque->valorvenda);
-        $estoque->save();
-
-        //OBTEM TODOS OS INPUTS E FAZ Mass assignment
-        Venda::create($request->all());
+        //OBTEM OS DADOS E CADASTRAR VIA VENDAS REPOSITORY
+        $repository->add($request);
 
         //RETORNA PARA A PAGINA
         return to_route('vendas.create')
@@ -106,27 +102,10 @@ class VendasController extends Controller
     }
 
     //FUNÇÃO PARA FAZER UPDATE DO REGISTRO DA VENDA
-    public function update(Venda $venda,Request $request)
+    public function update(Venda $venda,VendasFormRequest $request, VendaRepository $repository)
     {
-
-        if ($venda->idproduto !== $request->idproduto || $venda->quantidade !== $request->quantidade){
-            //OBTEM O ITEM DO ESTOQUE E FAZ UPDATE CONFORME A EDIÇÃO
-            $estoque = Estoque::query()->where('id','=',$venda->idproduto)->first();
-            $estoque->quantidade = $estoque->quantidade + $venda->quantidade;
-            $estoque->totalvalor = $estoque->totalvalor + ($venda->quantidade * $estoque->valorvenda);
-            $estoque->save();
-        }
-
-        //OBTEM O ITEM DO ESTOQUE E FAZ UPDATE CONFORME A EDIÇÃO
-        $estoque = Estoque::query()->where('id','=',$request->idproduto)->first();
-        $estoque->quantidade = $estoque->quantidade - $request->quantidade;
-        $estoque->totalvalor = $estoque->totalvalor - ($request->quantidade * $estoque->valorvenda);
-        $estoque->save();
-
-
-        //OBTEM TODOS OS INPUTS E FAZ Mass assignment
-        $venda->fill($request->all());
-        $venda->save();
+        //OBTEM OS DADOS E FAZ UPDATE VIA VENDA REPOSITORY
+        $repository->edit($request, $venda);
 
         //RETORNA PARA A PAGINA
         return to_route('vendas.index')
@@ -134,17 +113,10 @@ class VendasController extends Controller
     }
 
     //FUNÇÃO PARA EXCLUIR REGISTRO DA VENDA
-    public function destroy(Venda $venda)
+    public function destroy(Venda $venda, VendaRepository $repository)
     {
-
-        //OBTEM O ITEM DO ESTOQUE E FAZ UPDATE CONFORME A VENDA
-        $estoque = Estoque::query()->where('id','=',$venda->idproduto)->first();
-        $estoque->quantidade = $estoque->quantidade + $venda->quantidade;
-        $estoque->totalvalor = $estoque->totalvalor + ($venda->quantidade * $estoque->valorvenda);
-        $estoque->save();
-
-        //FAZ A EXCLUSÃO
-        $venda->delete();
+        //OBTEM OS DADOS E DELETA VIA VENDA REPOSITORY
+        $repository->delete($venda);
 
         //RETORNA PARA A PAGINA
         return to_route('vendas.index')
@@ -153,10 +125,10 @@ class VendasController extends Controller
 
 
     //FUNÇÃO BUSCAR VALOR DO PRODUTO NO ESTOQUE
-    public function buscavalorestoque(Estoque $estoque)
+    public function buscavalorestoque(Estoque $estoque, EstoqueRepository $repository)
     {
         //BUSCAO VALOR DO PRODUTO
-        $produto = Estoque::query()->where('id', '=', $estoque->id)->get('valorvenda');
+        $produto = $repository->buscaValor($estoque);
 
         //RETORNA PARA A PAGINA
         return response()->json([

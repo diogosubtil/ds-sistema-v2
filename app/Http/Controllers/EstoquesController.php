@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EstoqueFormRequest;
 use App\Models\Estoque;
+use App\Repositories\EstoqueRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EstoquesController extends Controller
 {
@@ -74,21 +77,10 @@ class EstoquesController extends Controller
     }
 
     //FUNÇÃO PARA CRIAR REGISTRO NO ESTOQUE
-    public function store(Request $request)
+    public function store(EstoqueFormRequest $request, EstoqueRepository $repository)
     {
-        //OBTEM TODOS OS INPUTS E CADASTRAR
-        $estoque = new Estoque();
-        $estoque->nome = $request->nome;
-        $estoque->tipo = $request->tipo;
-        $estoque->descricao = $request->descricao;
-        $estoque->valor = $request->valor;
-        $estoque->quantidade = $request->quantidade;
-        $estoque->valorvenda = $request->valorvenda;
-        $estoque->unidade = 1;
-        $estoque->totalvalor = $request->quantidade*$request->valorvenda;
-        $estoque->data = date('Y-m-d');
-        $estoque->save();
-
+        //OBTEM OS DADOS E CADASTRAR VIA ESTOQUE REPOSITORY
+        $repository->add($request);
 
         //RETORNA O RESULTADO NA PAGINA
         return to_route('estoque.create')
@@ -96,9 +88,11 @@ class EstoquesController extends Controller
     }
 
     //FUNÇÃO PARA DELETAR UM REGISTRO
-    public function destroy(Estoque $estoque)
+    public function destroy(Estoque $estoque, EstoqueRepository $repository)
     {
-        $estoque->delete();
+        //OBTEM OS DADOS E DELETA VIA ESTOQUE REPOSITORY
+        $repository->delete($estoque);
+
         return to_route('estoque.index')
             ->with('status', 'success');
     }
@@ -110,18 +104,10 @@ class EstoquesController extends Controller
     }
 
     //FUNÇÃO FAZ O UPDATE DO REGISTRO
-    public function update(Request $request, Estoque $estoque)
+    public function update(EstoqueFormRequest $request, Estoque $estoque, EstoqueRepository $repository)
     {
-        //OBTEM TODOS OS INPUTS E CADASTRA
-        $estoque->nome = $request->nome;
-        $estoque->tipo = $request->tipo;
-        $estoque->descricao = $request->descricao;
-        $estoque->valor = $request->valor;
-        $estoque->quantidade = $request->quantidade;
-        $estoque->valorvenda = $request->valorvenda;
-        $estoque->unidade = 1;
-        $estoque->totalvalor = $request->quantidade*$request->valorvenda;
-        $estoque->save();
+        //OBTEM OS DADOS E FAZ UPDATE VIA ESTOQUE REPOSITORY
+        $repository->edit($request, $estoque);
 
         //RETORNA O RESULTADO NA PAGINA
         return to_route('estoque.index')

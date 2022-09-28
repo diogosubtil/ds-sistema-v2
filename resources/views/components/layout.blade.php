@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\UnidadesController;
+
 //FUNÇÃO PARA OBTEM A FUNÇÃO DO USUARIO LOGADO
 function nomefuncao(){
 
@@ -109,19 +111,19 @@ $unidadesUsuario = explode(',', Auth::user()['unidade']);
         <body class="hold-transition sidebar-mini layout-fixed">
             <!-- Left navbar links -->
             <ul class="navbar-nav">
-                <li class="nav-item">
+                <li class="nav-item mt-2">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item">
                     <form action="" method="POST">
                         @csrf
                         <div class="row align-items-center">
-                            <div class="col-md-4 col-8">
+                            <div class="col-md-4 col-8 mt-2">
                                 <label>
                                     <select name="unidade" class="form-control" required>
                                         <option selected disabled>Selecionar...</option>
                                         @foreach ($unidadesUsuario as $unidadeUsuario)
-                                        <option @if($unidadesUsuario[0] === $unidadeUsuario) selected @endif  value="{{ $unidadeUsuario }}">{{ $unidadeUsuario }}</option>
+                                        <option value="{{ $unidadeUsuario }}">{{ UnidadesController::nomeUnidade(Auth::user()['unidade']) }}</option>
                                         @endforeach
                                     </select>
                                 </label>
@@ -130,7 +132,7 @@ $unidadesUsuario = explode(',', Auth::user()['unidade']);
                                 <button type="submit" class="btn btn-primary">Filtrar</button>
                             </div>
                             <div class="col-md-6 col-12">
-                                Loja: <strong>{{ Auth::user()['unidade'] }}</strong>
+                                Loja: <strong>{{ UnidadesController::nomeUnidade(Auth::user()['unidade']) }}</strong>
                             </div>
                         </div>
                     </form>
@@ -209,7 +211,7 @@ $unidadesUsuario = explode(',', Auth::user()['unidade']);
                         </li>
                         <!-- Menu Footer-->
                         <li class="user-footer">
-                            <a href="/usuarios/alterar-senha.php?id=<?php echo 'USUARIO LOGADO ID' ?>" class="btn btn-default btn-flat">Alterar Senha</a>
+                            <a href="{{ route('users.password', Auth::user()['id']) }}" class="btn btn-default btn-flat">Alterar Senha</a>
                             <a href="{{ route('deslogar') }}" class="btn btn-default btn-flat float-right">Sair</a>
                         </li>
                     </ul>

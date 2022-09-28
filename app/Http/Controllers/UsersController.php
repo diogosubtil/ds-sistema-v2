@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PasswordFormRequest;
+use App\Http\Requests\UsersFormRequest;
 use App\Models\Unidade;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use App\Repositories\UserRepository;
+use Illuminate\Support\Facades\Request;
 
 class UsersController extends Controller
 {
@@ -34,13 +36,61 @@ class UsersController extends Controller
             ->with('unidades', $unidades);
     }
 
-    public function store(Request $request)
+    //FUNÇÃO PARA CADASTRAR
+    public function store(UsersFormRequest $request, UserRepository $repository)
     {
+        //OBTEM OS DADOS E CADASTRAR VIA USER REPOSITORY
+        $repository->add($request);
 
-        $data = $request->except('_token');
-        $data['password'] = Hash::make($data['password']);
+        return to_route('users.index')->with(['status' => 'success']);
+    }
 
-        User::create($data);
+    //FUNÇÃO PARA EXIBIR A VIEW (EDITAR)
+    public function edit(User $user)
+    {
+        //OBTEM AS UNIDADES
+        $unidades = Unidade::all();
+
+        return view('users.edit')
+            ->with('unidades', $unidades)
+            ->with('user', $user);
+    }
+
+    //FUNÇÃO PARA FAZER UPDATE NO USUARIO
+    public function update(UsersFormRequest $request, User $user, UserRepository $repository)
+    {
+        //OBTEM OS DADOS E FAZ UPDATE VIA USER REPOSITORY
+        $repository->edit($request, $user);
+
+        return to_route('users.index');
+    }
+
+    //FUNÇÃO PARA EXIVIR A VIEW DE ALTERAR A SENHA
+    public function password(User $user)
+    {
+        return view('users.password')->with('user', $user);
+    }
+
+    //FUNÇÃO PARA ALTERAR A SENHA
+    public function editPassword(PasswordFormRequest $request, User $user, UserRepository $repository)
+    {
+        //OBTEM OS DADOS E FAZ UPDATE VIA USER REPOSITORY
+        $senha = $repository->alterPassword($request, $user);
+
+        //VERIFICA SE O UPDATE RETORNA FALSE
+        if ($senha === false) {
+            $senha = 'Senha antiga não confere';
+            return view('users.password')->with('user', $user)->with('senha', $senha);
+        } else {
+            return to_route('users.index')->with(['status' => 'success']);
+        }
+
+    }
+
+    //FUNÇÂO PARA DELETAR O USUARIO
+    public function destroy(User $user, UserRepository $repository)
+    {
+        $repository->delete($user);
 
         return to_route('users.index')->with(['status' => 'success']);
     }
