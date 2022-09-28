@@ -33,24 +33,36 @@
                                     <td>{{ $usuario->funcao }}</td>
                                     <td>{{ $usuario->unidade }}</td>
                                     <td>
-                                        <a href="{{ route('users.edit', $usuario->id) }}">
-                                            <button type="button" class="btn btn-primary">Editar</button>
-                                        </a>
-                                        <a href="{{ route('users.edit', $usuario->id) }}">
-                                            <button type="button" class="btn btn-warning">Alterar Senha</button>
-                                        </a>
+                                        <div class="d-flex">
+                                            <a class="ml-2" href="{{ route('users.edit', $usuario->id) }}">
+                                                <button type="button" class="btn btn-primary">Editar</button>
+                                            </a>
+                                            <a class="ml-2" href="{{ route('users.password', $usuario->id) }}">
+                                                <button type="button" class="btn btn-warning">Alterar Senha</button>
+                                            </a>
 
-                                        @if (Auth::user()['funcao'] === '1' || Auth::user()['funcao'] === '2')
-                                            @if (Auth::user()['funcao'] == '1' && Auth::user()['funcao'] !== $usuario->funcao )
-                                                <a href="{{ route('users.destroy', $usuario->id) }}" class="btn btn-danger" onclick="return confirm('Deseja realmente excluir?');">
-                                                    Excluir
-                                                </a>
-                                            @elseif (Auth::user()['funcao'] == '2' && $usuario->funcao == '4' || $usuario->funcao == '10' )
-                                                <a href="{{ route('users.destroy', $usuario->id) }}" class="btn btn-danger" onclick="return confirm('Deseja realmente excluir?');">
-                                                    Excluir
-                                                </a>
+                                            @if (Auth::user()['funcao'] === '1' || Auth::user()['funcao'] === '2')
+                                                @if (Auth::user()['funcao'] == '1' && Auth::user()['funcao'] !== $usuario->funcao )
+                                                    <form class="ml-2" action="{{ route('users.destroy', $usuario->id) }}" method="post">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger" onclick="return confirm('Deseja realmente excluir?');">
+                                                            Excluir
+                                                        </button>
+                                                    </form>
+
+                                                @elseif (Auth::user()['funcao'] == '2' && $usuario->funcao == '4' || $usuario->funcao == '10' )
+                                                    <form class="ml-2" action="{{ route('users.destroy', $usuario->id) }}" method="post">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger" onclick="return confirm('Deseja realmente excluir?');">
+                                                            Excluir
+                                                        </button>
+                                                    </form>
+                                                @endif
                                             @endif
-                                        @endif
+                                        </div>
+
                                     </td>
                                 </tr>
                             @endforeach

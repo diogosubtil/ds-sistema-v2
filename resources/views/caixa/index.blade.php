@@ -99,22 +99,22 @@
                                                     <label for="tipo">Tipo</label>
                                                     <select  name="tipo" id="tipo" class="form-control" >
                                                         <option value="">Selecione</option>
-                                                        <option value="Entrada">Entrada</option>
-                                                        <option value="Saida">Saida</option>
+                                                        <option @if(isset($_GET['tipo']) == 'Entrada') selected @endif value="Entrada">Entrada</option>
+                                                        <option @if(isset($_GET['tipo']) == 'Saida') selected @endif value="Saida">Saida</option>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="datainicio">Data Inicio</label>
-                                                    <input  type="date" class="form-control" id="datainicio" name="datainicio" value="">
+                                                    <input  type="date" class="form-control" id="datainicio" name="datainicio" @isset($_GET['datainicio']) value="{{ $_GET['datainicio'] }}" @endisset>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="datafim">Data Fim</label>
-                                                    <input  type="date" class="form-control" id="datafim" name="datafim" value="">
+                                                    <input  type="date" class="form-control" id="datafim" name="datafim" @isset($_GET['datainicio']) value="{{ $_GET['datafim'] }}" @endisset>
                                                 </div>
                                             </div>
                                         </div>

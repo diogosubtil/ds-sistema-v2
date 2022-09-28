@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CaixaFormRequest;
 use App\Models\Caixa;
+use App\Repositories\CaixaRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CaixasController extends Controller
 {
@@ -61,7 +64,8 @@ class CaixasController extends Controller
         return view('caixa.index')->with('listaCaixa', $listaCaixa)
                                         ->with('balancoCaixa', $balancoCaixa)
                                         ->with('totalEntradas', $totalEntradas)
-                                        ->with('totalSaidas', $totalSaidas);
+                                        ->with('totalSaidas', $totalSaidas)
+                                        ->with('status', '');
     }
 
     //FUNÇÃO PARA EXIBIR A VIEW DA PAGINA (CADASTRAR)
@@ -79,31 +83,20 @@ class CaixasController extends Controller
     }
 
     //FUNÇÃO PARA ADICIONAR UM REGISTRO NO CAIXA
-    public function store(Request $request)
+    public function store(CaixaFormRequest $request, CaixaRepository $repository)
     {
-        //OBTEM TODOS OS INPUTS E VERIFICA
-        $caixa = new Caixa();
-        $caixa->descricao = $request->descricao;
-        $caixa->tipo = $request->tipo;
-        if ($request->tipo == 'Saida'){
-            $caixa->valor = '-'.$request->valor;
-        } else {
-            $caixa->valor = $request->valor;
-        }
-        $caixa->data = $request->data;
-        $caixa->usuario = $request->usuario;
-        $caixa->unidade = $request->unidade;
-        $caixa->save();
+        //OBTEM OS DADOS E CADASTRAR VIA CAIXA REPOSITORY
+        $repository->add($request);
 
         return to_route('caixa.create')
             ->with('status', 'success');
     }
 
     //FUNÇÃO PARA DELETAR UM REGISTRO
-    public function destroy(Caixa $caixa)
+    public function destroy(Caixa $caixa,CaixaRepository $repository)
     {
-        //DELETA O REGISTRO
-        $caixa->delete();
+        //OBTEM OS DADOS E DELETA VIA CAIXA REPOSITORY
+        $repository->delete($caixa);
 
         //RETORNA PARA A PAGINA
         return to_route('caixa.index')
@@ -117,16 +110,11 @@ class CaixasController extends Controller
     }
 
     //FUNÇÃO FAZ O UPDATE DO REGISTRO
-    public function update(Caixa $caixa, Request $request)
+    public function update(Caixa $caixa, CaixaFormRequest $request, CaixaRepository $repository)
     {
-        //OBTEM TODOS OS INPUTS E FAZ Mass assignment
-        $caixa->fill($request->all());
-        //VERIFICA SE É UMA SAIDA E FAZ O VALOR FICAR NEGATIVO
-        if ($request->tipo == 'Saida'){
-            $caixa->valor = '-'.$request->valor;
-        }
-        //SALVA A EDIÇÃO
-        $caixa->save();
+
+        //OBTEM OS DADOS E FAZ UPDATE VIA CAIXA REPOSITORY
+        $repository->edit($request, $caixa);
 
         //RETORNA PARA A PAGINA
         return to_route('caixa.index')
