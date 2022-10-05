@@ -48,7 +48,7 @@ class UserRepository
     public function alterPassword(PasswordFormRequest $request, User $user)
     {
         //VERIFICA SE A SENHA ANTIGA SÃO IGUAIS
-        if (!password_verify($request->oldPassword, $user->password)){
+        if (!Hash::check($request->oldPassword, $user->password)){
             //SE NAO FOR IGUAIS RETORNA FALSE
             return false;
         } else {

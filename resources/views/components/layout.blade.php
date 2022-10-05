@@ -381,7 +381,7 @@ $unidadesUsuario = explode(',', Auth::user()['unidade']);
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item ">
-                                <a href="{{ route('unidades.index') }}" class="nav-link <?php activemenu('unidades/'); ?>">
+                                <a href="{{ route('unidades.create') }}" class="nav-link <?php activemenu('unidades/'); ?>">
                                     <i class="fas fa-pen nav-icon"></i>
                                     <p>Cadastrar</p>
                                 </a>
@@ -389,7 +389,7 @@ $unidadesUsuario = explode(',', Auth::user()['unidade']);
                         </ul>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route('unidades.create') }}" class="nav-link <?php activemenu('unidades/create'); ?>">
+                                <a href="{{ route('unidades.index') }}" class="nav-link <?php activemenu('unidades/create'); ?>">
                                     <i class="fas fa-list nav-icon"></i>
                                     <p>Lista</p>
                                 </a>
@@ -463,40 +463,17 @@ $unidadesUsuario = explode(',', Auth::user()['unidade']);
 <script src="{{ asset('/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 <!-- Alert Toastr -->
 <script src="{{ asset('/plugins/toastr/toastr.min.js') }}"></script>
-
-
+<!-- Toast Alert -->
+<script src="{{ asset('/js/toast-alert.js') }}"></script>
+<!-- CONSULTA CEP -->
+<script src="{{ asset('/js/cep.js') }}"></script>
 
 <script>
     $.widget.bridge('uibutton', $.ui.button)
-</script>
 
-<script>
     function excluir() {
         return confirm('Você realmente deseja excluir?');
     }
 </script>
-<script>
-    $(function() {
-        window.onload = function() {
-            if (document.getElementById('success')) {
-                toastr.success('Ação realizada com sucesso.', 'Sucesso!', {
-                    progressBar: true,
-                    timeOut: 5000,
-                });
-            }
-            if (document.getElementById('error')) {
-                toastr.error('Ocorreu algum erro na sua ação.', 'Erro!', {
-                    progressBar: true,
-                    timeOut: 5000,
-                });
-            }
-            if (document.getElementById('editado')) {
-                toastr.success('Editado com sucesso.', 'Editado!', {
-                    progressBar: true,
-                    timeOut: 5000,
-                });
-            }
-        }
-    });
-</script>
+
 </html>

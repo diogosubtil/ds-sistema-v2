@@ -65,6 +65,15 @@ class UsersController extends Controller
         return to_route('users.index');
     }
 
+    //FUNÇÂO PARA DELETAR O USUARIO
+    public function destroy(User $user, UserRepository $repository)
+    {
+        $repository->delete($user);
+
+        return to_route('users.index')->with(['status' => 'success']);
+    }
+
+
     //FUNÇÃO PARA EXIVIR A VIEW DE ALTERAR A SENHA
     public function password(User $user)
     {
@@ -87,11 +96,9 @@ class UsersController extends Controller
 
     }
 
-    //FUNÇÂO PARA DELETAR O USUARIO
-    public function destroy(User $user, UserRepository $repository)
+    //FUNÇÃO PARA OBTER O NOME DO USUARIO COM BASE NO SEU ID
+    public static function nomeUsuario($id)
     {
-        $repository->delete($user);
-
-        return to_route('users.index')->with(['status' => 'success']);
+        return User::query()->where('id', '=', $id)->first()->nome;
     }
 }

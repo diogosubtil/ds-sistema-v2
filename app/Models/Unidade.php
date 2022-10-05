@@ -14,7 +14,7 @@ class Unidade extends Model
     protected $table = 'unidades';
 
     //INPUTS
-    protected $fillable = ['nome'];
+    protected $fillable = ['cep', 'dataAbertura', 'whatsapp', 'meta', 'gerente', 'bairro', 'cidade', 'estado', 'endereco', 'numero', 'timezone', 'dataCadastro', 'dataAtualizacao'];
 
     //DESABILITA O UPDATE_AT e CREATE_AT
     public $timestamps = false;
