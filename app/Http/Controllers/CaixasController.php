@@ -6,6 +6,7 @@ use App\Http\Requests\CaixaFormRequest;
 use App\Models\Caixa;
 use App\Repositories\CaixaRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CaixasController extends Controller
@@ -14,16 +15,16 @@ class CaixasController extends Controller
     public function index()
     {
         //OBTEM A LISTAGEM DE REGISTRO DO CAIXA
-        $listaCaixa = Caixa::all();
+        $listaCaixa = Caixa::query()->where('unidade','=', Auth::user()->set_unidade)->get();
 
         //OBTEM A SOMA TOTAL DO VALOR
-        $balancoCaixa = $listaCaixa->sum('valor');
+        $balancoCaixa = Caixa::query()->where('unidade','=', Auth::user()->set_unidade)->sum('valor');
 
         //OBTEM A SOMA TOTAL DE ENTRADAS
-        $totalEntradas = $listaCaixa->toQuery()->whereIn('tipo', ['entrada'])->sum('valor');
+        $totalEntradas = Caixa::query()->where('unidade','=', Auth::user()->set_unidade)->whereIn('tipo', ['entrada'])->sum('valor');
 
         //OBTEM A SOMA TOTAL DE SAIDAS
-        $totalSaidas = $listaCaixa->toQuery()->whereIn('tipo', ['saida'])->sum('valor');
+        $totalSaidas = Caixa::query()->where('unidade','=', Auth::user()->set_unidade)->whereIn('tipo', ['saida'])->sum('valor');
 
         //OBTEM A FLASH MENSAGE
         $status = session('status');
@@ -40,9 +41,11 @@ class CaixasController extends Controller
     public function filter(Request $request)
     {
         //OBTEM O FILTRO
-        $listaCaixa = Caixa::query()->where('descricao', 'LIKE', "%$request->descricao%")
-                                    ->where('tipo', 'LIKE', "%$request->tipo%")
-                                    ->get();
+        $listaCaixa = Caixa::query()
+            ->where('descricao', 'LIKE', "%$request->descricao%")
+            ->where('tipo', 'LIKE', "%$request->tipo%")
+            ->where('unidade','=', Auth::user()->set_unidade)
+            ->get();
 
         //VERIFICA SE EXISTE O FILTRO POR DATA
         if ($request->datainicio){
@@ -51,13 +54,27 @@ class CaixasController extends Controller
         }
 
         //OBTEM A SOMA TOTAL DO VALOR
-        $balancoCaixa = $listaCaixa->sum('valor');
+        $balancoCaixa = Caixa::query()
+            ->where('descricao', 'LIKE', "%$request->descricao%")
+            ->where('tipo', 'LIKE', "%$request->tipo%")
+            ->where('unidade','=', Auth::user()->set_unidade)
+            ->sum('valor');
 
         //OBTEM A SOMA TOTAL DO VALOR
-        $totalEntradas = $listaCaixa->toQuery()->whereIn('tipo', ['entrada'])->sum('valor');
+        $totalEntradas = Caixa::query()
+            ->where('descricao', 'LIKE', "%$request->descricao%")
+            ->where('tipo', 'LIKE', "%$request->tipo%")
+            ->where('unidade','=', Auth::user()->set_unidade)
+            ->whereIn('tipo', ['entrada'])
+            ->sum('valor');
 
         //OBTEM A SOMA TOTAL DO VALOR
-        $totalSaidas = $listaCaixa->toQuery()->whereIn('tipo', ['saida'])->sum('valor');
+        $totalSaidas = Caixa::query()
+            ->where('descricao', 'LIKE', "%$request->descricao%")
+            ->where('tipo', 'LIKE', "%$request->tipo%")
+            ->where('unidade','=', Auth::user()->set_unidade)
+            ->whereIn('tipo', ['saida'])
+            ->sum('valor');
 
 
         //RETORNA O FILTRO NA PAGINA
@@ -72,7 +89,7 @@ class CaixasController extends Controller
     public function create()
     {
         //OBTEM A LISTA DE REGISTRO COM MAXIMO 10
-        $listaCaixa = Caixa::all()->take(10);
+        $listaCaixa = Caixa::query()->where('unidade','=', Auth::user()->set_unidade)->get()->take(10);
 
         //OBTEM O FLASH MENSAGE
         $status = session('status');

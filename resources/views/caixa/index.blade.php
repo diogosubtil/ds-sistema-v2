@@ -150,25 +150,27 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @foreach($listaCaixa as $caixa)
-                                            <tr>
-                                            <td>{{ $caixa->usuario }}</td>
-                                            <td>{{ $caixa->descricao }}</td>
-                                            <td>{{ $caixa->tipo }}</td>
-                                            <td>{{ number_format($caixa->valor, 2, ',', '.') }}</td>
-                                            <td>{{ date('d/m/Y', strtotime($caixa->data)) }}</td>
-                                            <td class="d-flex justify-content-center">
-                                                @if( empty($caixa->idservico) && empty($caixa->idvenda))
-                                                    <a href="{{ route('caixa.edit', $caixa->id) }}"><button type="button" class="btn btn-primary toastrDefaultSuccess mr-2"><i class="fas fa-pen"></i></button></a>
-                                                @endif
-                                                <form action="{{ route('caixa.destroy', $caixa->id) }}" method="post">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button onclick="return excluir()" id="excluirconfirm" type="submit" class="btn btn-danger toastrDefaultSuccess" ><i class="fas fa-trash"></i></button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                        @endforeach
+                                            @forelse($listaCaixa as $caixa)
+                                                <tr>
+                                                    <td>{{ $caixa->usuario }}</td>
+                                                    <td>{{ $caixa->descricao }}</td>
+                                                    <td>{{ $caixa->tipo }}</td>
+                                                    <td>{{ number_format($caixa->valor, 2, ',', '.') }}</td>
+                                                    <td>{{ date('d/m/Y', strtotime($caixa->data)) }}</td>
+                                                    <td class="d-flex justify-content-center">
+                                                        @if( empty($caixa->idservico) && empty($caixa->idvenda))
+                                                            <a href="{{ route('caixa.edit', $caixa->id) }}"><button type="button" class="btn btn-primary toastrDefaultSuccess mr-2"><i class="fas fa-pen"></i></button></a>
+                                                        @endif
+                                                        <form action="{{ route('caixa.destroy', $caixa->id) }}" method="post">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button onclick="return excluir()" id="excluirconfirm" type="submit" class="btn btn-danger toastrDefaultSuccess" ><i class="fas fa-trash"></i></button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            @empty
+
+                                            @endforelse
                                         </tbody>
                                     </table>
                                 </div>

@@ -8,6 +8,7 @@ use App\Models\Venda;
 use App\Repositories\EstoqueRepository;
 use App\Repositories\VendaRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class VendasController extends Controller
 {
@@ -15,13 +16,13 @@ class VendasController extends Controller
     public function index()
     {
         //OBTEM A LISTAGEM
-        $listaVenda = Venda::all();
+        $listaVenda = Venda::query()->where('unidade', '=', Auth::user()->set_unidade)->get();
 
         //OBTEM QUANTIDADE DE PRODUTOS VENDIDOS
-        $produtosVendidos = Venda::all()->sum('quantidade');
+        $produtosVendidos = Venda::query()->where('unidade', '=', Auth::user()->set_unidade)->sum('quantidade');
 
         //OBTEM TOTAL DE VENDAS
-        $totalVendas = Venda::all()->sum('valortotal');
+        $totalVendas = Venda::query()->where('unidade', '=', Auth::user()->set_unidade)->sum('valortotal');
 
         //OBTEM FLASH MENSAGE
         $status = session('status');
@@ -39,6 +40,7 @@ class VendasController extends Controller
         //OBTEM A LISTAGEM
         $listaVenda = Venda::query()->where('nomecliente', 'LIKE', "%$request->nomecliente%")
                                     ->where('tipo', 'LIKE', "%$request->tipo%")
+                                    ->where('unidade', '=', Auth::user()->set_unidade)
                                     ->get();
 
         if ($request->datainicio){
@@ -47,26 +49,35 @@ class VendasController extends Controller
         }
 
         //OBTEM QUANTIDADE DE PRODUTOS VENDIDOS
-        $produtosVendidos = $listaVenda->sum('quantidade');
+        $produtosVendidos = Venda::query()
+            ->where('nomecliente', 'LIKE', "%$request->nomecliente%")
+            ->where('tipo', 'LIKE', "%$request->tipo%")
+            ->where('unidade', '=', Auth::user()->set_unidade)
+            ->sum('quantidade');
 
         //OBTEM TOTAL DE VENDAS
-        $totalVendas = $listaVenda->sum('valortotal');
+        $totalVendas = Venda::query()
+            ->where('nomecliente', 'LIKE', "%$request->nomecliente%")
+            ->where('tipo', 'LIKE', "%$request->tipo%")
+            ->where('unidade', '=', Auth::user()->set_unidade)
+            ->sum('valortotal');
 
         //RETORNA O RESULTADO NA PAGINA
         return view('vendas.index')
             ->with('listaVenda', $listaVenda)
             ->with('produtosVendidos', $produtosVendidos)
-            ->with('totalVendas', $totalVendas);
+            ->with('totalVendas', $totalVendas)
+            ->with('status', '');
     }
 
     //FUNÇÃO EXIBIR A VIEW DA PAGINA (CADASTRAR)
     public function create()
     {
         //OBTEM LISTAGEM COM LIMITE 10
-        $listaVenda = Venda::all()->take(10);
+        $listaVenda = Venda::query()->where('unidade', '=',Auth::user()->set_unidade)->get()->take(10);
 
         //OBTEM LISTA DE PRODUTOS
-        $listaEstoque = Estoque::all();
+        $listaEstoque = Estoque::query()->where('unidade', '=', Auth::user()->set_unidade)->get();
 
         //OBTEM FLASH MENSAGE
         $status = session('status');

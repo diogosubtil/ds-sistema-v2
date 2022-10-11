@@ -6,6 +6,7 @@ use App\Http\Requests\ServicosFormRequest;
 use App\Models\Servico;
 use App\Repositories\ServicoRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ServicosController extends Controller
@@ -14,13 +15,13 @@ class ServicosController extends Controller
     public function index()
     {
         //OBTEM A LISTAGEM DE REGISTRO DE SERVICOS
-        $listaSevicos = Servico::all();
+        $listaSevicos = Servico::query()->where('unidade', '=', Auth::user()->set_unidade)->get();
 
         //OBTEM O TOTAL DE CUSTOS
-        $totalCusto = Servico::all()->sum('custo');
+        $totalCusto = Servico::query()->where('unidade', '=', Auth::user()->set_unidade)->sum('custo');
 
         //OBTEM O VALOR TOTAL
-        $totalValor = Servico::all()->sum('valor');
+        $totalValor = Servico::query()->where('unidade', '=', Auth::user()->set_unidade)->sum('valor');
 
         //OBTEM FLASH MENSAGE
         $status = session('status');
@@ -39,6 +40,7 @@ class ServicosController extends Controller
         //OBTEM O FILTRO
         $listaSevicos = Servico::query()->where('nomecliente', 'LIKE', "%$request->nomecliente%")
                                         ->where('pagamento', 'LIKE', "%$request->pagamento%")
+                                        ->where('unidade', '=', Auth::user()->set_unidade)
                                         ->get();
 
         //VERIFICA SE EXISTE O FILTRO POR DATA
@@ -48,23 +50,32 @@ class ServicosController extends Controller
         }
 
         //OBTEM O TOTAL DE CUSTOS
-        $totalCusto = $listaSevicos->sum('custo');
+        $totalCusto = Servico::query()
+            ->where('nomecliente', 'LIKE', "%$request->nomecliente%")
+            ->where('pagamento', 'LIKE', "%$request->pagamento%")
+            ->where('unidade', '=', Auth::user()->set_unidade)
+            ->sum('custo');
 
         //OBTEM O VALOR TOTAL
-        $totalValor = $listaSevicos->sum('valor');
+        $totalValor = Servico::query()
+            ->where('nomecliente', 'LIKE', "%$request->nomecliente%")
+            ->where('pagamento', 'LIKE', "%$request->pagamento%")
+            ->where('unidade', '=', Auth::user()->set_unidade)
+            ->sum('valor');
 
         //RETORNA O FILTRO NA PAGINA
         return view('servicos.index')
             ->with('listaServicos', $listaSevicos)
             ->with('totalCusto', $totalCusto)
-            ->with('totalValor', $totalValor);
+            ->with('totalValor', $totalValor)
+            ->with('status', '');
     }
 
     //FUNÇÃO PARA EXIBIR  A VIEW DA PAGINA (CADASTRAR)
     public function create()
     {
         //OBTEM A LISTA DE REGISTRO DOS SERVIÇOS (LIMITE 10)
-        $listaServicos = Servico::all()->take(10);
+        $listaServicos = Servico::query()->where('unidade', '=', Auth::user()->set_unidade)->get()->take(10);
 
         //OBTEM FLASH MENSAGE
         $status = session('status');

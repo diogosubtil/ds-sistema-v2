@@ -7,7 +7,8 @@ use App\Http\Requests\UsersFormRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
+
 
 class UserRepository
 {
@@ -72,5 +73,18 @@ class UserRepository
     {
         //OBTEM E DELETA O USUARIO
         $user->delete();
+    }
+
+    //FUNÇÃO PARA ALTERAR NO BANCO DE DADOS A UNIDADE PARA EXIBIR INFORMAÇÕES NO SISTEMA
+    public function setUnidade(Request $request, User $user)
+    {
+        //INICIA A TARNSAÇÃO
+        DB::beginTransaction();
+
+        $user->set_unidade = $request->unidade;
+        $user->save();
+
+        //ENVIA A ATRANSAÇÃO (COMMIT)
+        DB::commit();
     }
 }

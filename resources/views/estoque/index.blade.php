@@ -147,7 +147,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach($listaEstoque as $estoque)
+                                    @forelse($listaEstoque as $estoque)
                                         <?php
                                         if($estoque->tipo == 'capa'){
                                             $tipo = 'Capa para Celular';
@@ -179,7 +179,8 @@
                                             </form>
                                         </td>
                                     </tr>
-                                    @endforeach
+                                    @empty
+                                    @endforelse
                                     </tbody>
                                 </table>
                             </div>

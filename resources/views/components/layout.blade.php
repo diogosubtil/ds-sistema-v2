@@ -6,7 +6,7 @@ use App\Http\Controllers\UnidadesController;
 function nomefuncao(){
 
     //OBTEM A FUNÇÃO
-    $usuario = Auth::user()['funcao'];
+    $usuario = Auth::user()->funcao;
 
     //VERIFICA
     if ($usuario == '1'){
@@ -44,16 +44,8 @@ function activemenu($currect_page)
     }
 }
 
-
-//SELEÇAO DE UNIDADE
-if (isset($_POST['unidade'])) {
-    Auth::user()['unidade'] = $_POST['unidade'];
-    header("Refresh:0");
-    exit;
-}
-
 //ORGANIZA AS UNIDADES DO USUÁRIO
-$unidadesUsuario = explode(',', Auth::user()['unidade']);
+$unidadesUsuario = explode(',', Auth::user()->unidade);
 
 ?>
     <!DOCTYPE html>
@@ -115,15 +107,15 @@ $unidadesUsuario = explode(',', Auth::user()['unidade']);
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item">
-                    <form action="" method="POST">
+                    <form action="{{ route('users.setUnidade', Auth::user()->id) }}" method="post">
                         @csrf
                         <div class="row align-items-center">
                             <div class="col-md-4 col-8 mt-2">
                                 <label>
-                                    <select name="unidade" class="form-control" required>
+                                    <select id="unidade" name="unidade" class="form-control" required>
                                         <option selected disabled>Selecionar...</option>
                                         @foreach ($unidadesUsuario as $unidadeUsuario)
-                                        <option value="{{ $unidadeUsuario }}">{{ UnidadesController::nomeUnidade(Auth::user()['unidade']) }}</option>
+                                        <option value="{{ $unidadeUsuario }}">{{ UnidadesController::nomeUnidade($unidadeUsuario) }}</option>
                                         @endforeach
                                     </select>
                                 </label>
@@ -132,7 +124,7 @@ $unidadesUsuario = explode(',', Auth::user()['unidade']);
                                 <button type="submit" class="btn btn-primary">Filtrar</button>
                             </div>
                             <div class="col-md-6 col-12">
-                                Loja: <strong>{{ UnidadesController::nomeUnidade(Auth::user()['unidade']) }}</strong>
+                                Loja: <strong>{{ UnidadesController::nomeUnidade(Auth::user()->set_unidade) }}</strong>
                             </div>
                         </div>
                     </form>
@@ -343,69 +335,70 @@ $unidadesUsuario = explode(',', Auth::user()['unidade']);
                             </li>
                         </ul>
                     </li>
-
-<!--                    --><?php //if (Login::requireFuncao('1 , 2')) { ?>
-                    <li class="nav-item <?php active('users'); ?>">
-                        <a href="#" class="nav-link <?php active('users'); ?>">
-                            <i class="nav-icon fas fa-user"></i>
-                            <p>
-                                Usuarios
-                                <i class="fas fa-angle-left right"></i>
-                            </p>
-                        </a>
-
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{{ route('users.create') }}" class="nav-link <?php activemenu('users/create'); ?>">
-                                    <i class="fas fa-pen nav-icon"></i>
-                                    <p>Cadastrar</p>
-                                </a>
-                            </li>
-                        </ul>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{{ route('users.index') }}" class="nav-link <?php activemenu('users/'); ?>">
-                                    <i class="fas fa-list nav-icon"></i>
-                                    <p>Lista</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="nav-item <?php active('unidades'); ?>">
-                        <a href="#" class="nav-link <?php active('unidades'); ?>">
-                            <i class="nav-icon fas fa-warehouse"></i>
-                            <p>
-                                Lojas
-                                <i class="fas fa-angle-left right"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item ">
-                                <a href="{{ route('unidades.create') }}" class="nav-link <?php activemenu('unidades/'); ?>">
-                                    <i class="fas fa-pen nav-icon"></i>
-                                    <p>Cadastrar</p>
-                                </a>
-                            </li>
-                        </ul>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{{ route('unidades.index') }}" class="nav-link <?php activemenu('unidades/create'); ?>">
-                                    <i class="fas fa-list nav-icon"></i>
-                                    <p>Lista</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-{{--                    <?php } ?>--}}
-{{--                    <?php if (Login::requireFuncao('1')) { ?>--}}
-                    <li class="nav-item <?php active('master'); ?>">
-                        <a href="#" class="nav-link <?php active('master'); ?>">
+                    <li class="nav-item <?php active('master'); ?><?php active('unidades'); ?><?php active('users'); ?>">
+                        <a href="#" class="nav-link <?php active('master'); ?><?php active('unidades'); ?><?php active('users'); ?>">
                             <i class="nav-icon fas fa-user-tie"></i>
                             <p>
                                 Administração
                                 <i class="fas fa-angle-left right"></i>
                             </p>
                         </a>
+
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item <?php active('users'); ?>">
+                                <a href="#" class="nav-link <?php active('users'); ?>">
+                                    <i class="nav-icon fas fa-user"></i>
+                                    <p>
+                                        Usuarios
+                                        <i class="fas fa-angle-left right"></i>
+                                    </p>
+                                </a>
+
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="{{ route('users.create') }}" class="nav-link <?php activemenu('users/create'); ?>">
+                                            <i class="fas fa-pen nav-icon"></i>
+                                            <p>Cadastrar</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="{{ route('users.index') }}" class="nav-link <?php activemenu('users/'); ?>">
+                                            <i class="fas fa-list nav-icon"></i>
+                                            <p>Lista</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item <?php active('unidades'); ?>">
+                                <a href="#" class="nav-link <?php active('unidades'); ?>">
+                                    <i class="nav-icon fas fa-warehouse"></i>
+                                    <p>
+                                        Lojas
+                                        <i class="fas fa-angle-left right"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item ">
+                                        <a href="{{ route('unidades.create') }}" class="nav-link <?php activemenu('unidades/create'); ?>">
+                                            <i class="fas fa-pen nav-icon"></i>
+                                            <p>Cadastrar</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="{{ route('unidades.index') }}" class="nav-link <?php activemenu('unidades/'); ?>">
+                                            <i class="fas fa-list nav-icon"></i>
+                                            <p>Lista</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
                                 <a href="{{ route('master.index') }}" class="nav-link <?php activemenu('master/'); ?>">
@@ -414,6 +407,7 @@ $unidadesUsuario = explode(',', Auth::user()['unidade']);
                                 </a>
                             </li>
                         </ul>
+
                     </li>
 <!--                    --><?php //} ?>
                 </ul>
