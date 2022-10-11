@@ -7,7 +7,8 @@ use App\Http\Requests\UsersFormRequest;
 use App\Models\Unidade;
 use App\Models\User;
 use App\Repositories\UserRepository;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
+
 
 class UsersController extends Controller
 {
@@ -100,5 +101,17 @@ class UsersController extends Controller
     public static function nomeUsuario($id)
     {
         return User::query()->where('id', '=', $id)->first()->nome;
+    }
+
+    //FUNÇÃO PARA ALTERAR A UNIDADE PARA EXIBIR AS INFORMAÇÕES DO SISTEMA
+    public function setUnidade(Request $request,User $user, UserRepository $repository)
+    {
+        //VALIDA SE ALGUMA UNIDADE FOI SELECIONADA
+        $request->validate(['unidade' => 'required']);
+
+        //OBTEM OS DADOS DO REQUEST E FAZ UPDATE VIA USER REPOSITORY
+        $repository->setUnidade($request, $user);
+
+        return redirect()->back();
     }
 }

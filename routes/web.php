@@ -52,6 +52,7 @@ Route::middleware(Autenticador::class)->group( function () {
 
     Route::resource('/users', UsersController::class);
     Route::get('/users/{user}/password', [UsersController::class, 'password'])->name('users.password');
+    Route::post('/users/{user}/setUnidade', [UsersController::class, 'setUnidade'])->name('users.setUnidade');
     Route::post('/users/{user}/password', [UsersController::class, 'editPassword'])->name('users.editPassword');
 
     Route::resource('/unidades', UnidadesController::class);

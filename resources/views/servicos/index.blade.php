@@ -139,7 +139,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach ($listaServicos as $servico)
+                                    @forelse ($listaServicos as $servico)
                                         <?php
                                         if ($servico->pagamento == 'D'){
                                             $FormPag = 'Dinheiro';
@@ -170,7 +170,8 @@
                                             </form>
                                         </td>
                                     </tr>
-                                    @endforeach
+                                    @empty
+                                    @endforelse
                                     </tbody>
                                 </table>
                             </div>

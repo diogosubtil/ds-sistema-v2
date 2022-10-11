@@ -124,7 +124,7 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            @foreach ($listaServicos as $servico)
+                                            @forelse ($listaServicos as $servico)
                                                 <?php
                                                 if ($servico->pagamento == 'D'){
                                                     $FormPag = 'Dinheiro';
@@ -155,14 +155,12 @@
                                                         </form>
                                                     </td>
                                                 </tr>
-                                            @endforeach
+                                            @empty
+                                                <td class="position-absolute col-12">Nenhum registro encontrado!</td>
+                                            @endforelse
                                             </tbody>
                                         </table>
-                                        <div style="font-size: 20px">
-                                            <?php if (empty($listaServicos)){
-                                                echo 'Nenhum registro encontrado!';
-                                            } ?>
-                                        </div>
+
                                     </div>
 
                                 </div>

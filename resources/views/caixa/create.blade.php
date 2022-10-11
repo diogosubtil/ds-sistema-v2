@@ -104,7 +104,7 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            @foreach($listaCaixa as $caixa)
+                                            @forelse($listaCaixa as $caixa)
                                                 <tr>
                                                     <td>{{ $caixa->usuario }}</td>
                                                     <td>{{ $caixa->descricao }}</td>
@@ -122,14 +122,12 @@
                                                         </form>
                                                     </td>
                                                 </tr>
-                                            @endforeach
+                                            @empty
+                                                    <td class="position-absolute col-12">Nenhum registro encontrado!</td>
+                                            @endforelse
                                             </tbody>
                                         </table>
-                                        <div style="font-size: 20px">
-                                            @if (empty($listaCaixa))
-                                                'Nenhum registro encontrado!'
-                                            @endif
-                                        </div>
+
                                     </div>
 
                                 </div>

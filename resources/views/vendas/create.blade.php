@@ -61,9 +61,11 @@
                                                 <label for="idproduto">Produto</label>
                                                 <select  name="idproduto" id="idproduto" class="form-control" required>
                                                     <option value="">Selecione</option>
-                                                    @foreach($listaEstoque as $lista)
+                                                    @forelse($listaEstoque as $lista)
                                                     <option value="{{ $lista->id }}">{{  $lista->id." - ".$lista->nome." (".$lista->descricao.")"  }}</option>
-                                                    @endforeach
+                                                    @empty
+                                                        <option value="">Nenhum produto em estoque!</option>
+                                                    @endforelse
                                                 </select>
                                             </div>
                                         </div>
@@ -135,7 +137,7 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            @foreach($listaVenda as $lista)
+                                            @forelse($listaVenda as $lista)
                                                 <?php
                                                 if ($lista->tipo == 'D'){
                                                     $FormPag = 'Dinheiro';
@@ -166,14 +168,12 @@
                                                         </form>
                                                     </td>
                                                 </tr>
-                                            @endforeach
+                                            @empty
+                                                <td class="position-absolute col-12">Nenhum registro encontrado!</td>
+                                            @endforelse
                                             </tbody>
                                         </table>
-                                        <div style="font-size: 20px">
-                                            <?php if (empty($listaVenda)){
-                                                echo 'Nenhum registro encontrado!';
-                                            } ?>
-                                        </div>
+
                                     </div>
                                 </div>
                             </div>

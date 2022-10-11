@@ -140,7 +140,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach ($listaVenda as $lista)
+                                    @forelse ($listaVenda as $lista)
                                         <?php
                                         if ($lista->tipo == 'D'){
                                             $FormPag = 'Dinheiro';
@@ -171,7 +171,8 @@
                                                 </form>
                                             </td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                    @endforelse
                                     </tbody>
                                 </table>
                             </div>

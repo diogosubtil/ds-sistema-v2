@@ -109,7 +109,7 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            @foreach($listaEstoque as $estoque)
+                                            @forelse($listaEstoque as $estoque)
                                                 <?php
                                                 if($estoque->tipo == 'capa'){
                                                     $tipo = 'Capa para Celular';
@@ -141,14 +141,12 @@
                                                         </form>
                                                     </td>
                                                 </tr>
-                                            @endforeach
+                                            @empty
+                                                <td class="position-absolute col-12">Nenhum registro encontrado!</td>
+                                            @endforelse
                                             </tbody>
                                         </table>
-                                        <div style="font-size: 20px">
-                                            <?php if (empty($listaEstoque)){
-                                                echo 'Nenhum registro encontrado!';
-                                            } ?>
-                                        </div>
+
                                     </div>
 
                                 </div>
